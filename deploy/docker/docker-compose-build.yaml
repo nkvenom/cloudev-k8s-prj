@@ -1,0 +1,18 @@
+version: "3"
+services:
+  revproxy:
+    build:
+      context: .
+    image: nlaarm2/revproxy 
+  backend_user:
+    build:
+      context: ../../ug-api-user
+    image: nlaarm2/ug-api-user
+  backend_feed:
+    build:
+      context: ../../ug-api-feed  
+    image: nlaarm2/ug-api-feed
+  frontend:
+    build:
+      context: ../../ug-frontend  
+    image: nlaarm2/ug-frontend:local

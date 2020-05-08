@@ -1,74 +1,109 @@
-# Udagram Image Filtering Application
+# Udagram Microservice Instagram Clone
 
-Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
+Udagram allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
 
-The project is split into two parts:
-1. Frontend - Angular web application built with Ionic Framework
-2. Backend RESTful API - Node-Express application
+The project is split into three parts:
+1. [The Simple Frontend](/ug-frontend)
+A basic Ionic client web application which consumes the RestAPI Backend. 
+2. [The RestAPI Feed Backend](/ug-api-feed), a Node-Express feed microservice.
+3. [The RestAPI User Backend](/ug-api-user), a Node-Express user microservice.
 
-## Getting Started
-> _tip_: it's recommended that you start with getting the backend API running since the frontend web application depends on the API.
+## URLs
+[DockerHub Profile](https://hub.docker.com/u/nlaarm2)
 
-### Prerequisite
-1. The depends on the Node Package Manager (NPM). You will need to download and install Node from [https://nodejs.com/en/download](https://nodejs.org/en/download/). This will allow you to be able to run `npm` commands.
-2. Environment variables will need to be set. These environment variables include database connection details that should not be hard-coded into the application code.
-#### Environment Script
-A file named `set_env.sh` has been prepared as an optional tool to help you configure these variables on your local development environment.
- 
-We do _not_ want your credentials to be stored in git. After pulling this `starter` project, run the following command to tell git to stop tracking the script in git but keep it stored locally. This way, you can use the script for your convenience and reduce risk of exposing your credentials.
-`git rm --cached set_env.sh`
+## Screenshots
+- 00-dockerhub-profile.png
+- 01-gh-travis-integration.png
+- 02-travis-ci-success-deployment.png
+- 03-get-pods.png
+- 04-describe-services.png
+- 05-describe-hpa.png
+- 06-get-deployments.png
+- 07-get-logs.png
 
-Afterwards, we can prevent the file from being included in your solution by adding the file to our `.gitignore` file.
 
-### Database
-Create a PostgreSQL database either locally or on AWS RDS. Set the config values for environment variables prefixed with `POSTGRES_` in `set_env.sh`.
+## Setup in a Kubernetes Cluster with minikube
+### Building and uploading the docker images
+```bash
+cd deploy/docker 
+docker-compose -f docker-compose-build.yaml build --parallel
 
-### S3
-Create an AWS S3 bucket. Set the config values for environment variables prefixed with `AWS_` in `set_env.sh`.
+# upload the images
+docker push nlaarm2/ug-api-user
+docker push nlaarm2/ug-api-feed
+docker push nlaarm2/ug-api-feed
+docker push nlaarm2/revproxy
+```
+### Setup the config maps and secrets
+The following env variables should be present in the terminal session
+```bash
+export POSTGRESS_USERNAME=__INSERT__USERNAME__
+export POSTGRESS_PASSWORD=__INSERT__PASSWORD__
+export POSTGRESS_DB=__INSERT__DB__
+export POSTGRESS_HOST=__INSERT__HOST__
+export AWS_REGION=__INSERT_AWS_REGION__
+export AWS_PROFILE=__INSERT_AWS_PROFILE__
+export AWS_BUCKET=__INSERT_AWS_BUCKET__
+export URL=__INSERT_FRONTEND_URL_HERE_FOR_CORS
+export JWT_SECRET=__INSERT__ANY_SEED_HERE__
+```
 
-### Backend API
-* To download all the package dependencies, run the command from the directory `udagram-api/`:
-    ```bash
-    npm install .
-    ```
-* To run the application locally, run:
-    ```bash
-    npm run dev
-    ```
-* You can visit `http://localhost:8080/api/v0/feed` in your web browser to verify that the application is running. You should see a JSON payload. Feel free to play around with Postman to test the API's.
+Once those variables are defined
 
-### Frontend App
-* To download all the package dependencies, run the command from the directory `udagram-frontend/`:
-    ```bash
-    npm install .
-    ```
-* Install Ionic Framework's Command Line tools for us to build and run the application:
-    ```bash
-    npm install -g ionic
-    ```
-* Prepare your application by compiling them into static files.
-    ```bash
-    ionic build
-    ```
-* Run the application locally using files created from the `ionic build` command.
-    ```bash
-    ionic serve
-    ```
-* You can visit `http://localhost:8100` in your web browser to verify that the application is running. You should see a web interface.
+```bash
+cd ug-deployment/k8s
+# Load the secrets and env variables into k8s
+./setup-confmaps.sh
+kubectl apply -f backend-feed-deployment.yaml
+kubectl apply -f backend-feed-service.yaml
+kubectl apply -f backend-user-deployment.yaml
+kubectl apply -f backend-user-service.yaml
+kubectl apply -f apiproxy-deployment.yaml
+kubectl apply -f apiproxy-service.yaml
+kubectl apply -f frontend-deployment.yaml
+kubectl apply -f frontend-service.yaml
+```
 
-## Tips
-1. Take a look at `udagram-api` -- does it look like we can divide it into two modules to be deployed as separate microservices?
-2. The `.dockerignore` file is included for your convenience to not copy `node_modules`. Copying this over into a Docker container might cause issues if your local environment is a different operating system than the Docker image (ex. Windows or MacOS vs. Linux).
-3. It's useful to "lint" your code so that changes in the codebase adhere to a coding standard. This helps alleviate issues when developers use different styles of coding. `eslint` has been set up for TypeScript in the codebase for you. To lint your code, run the following:
-    ```bash
-    npx eslint --ext .js,.ts src/
-    ```
-    To have your code fixed automatically, run
-    ```bash
-    npx eslint --ext .js,.ts src/ --fix
-    ```
-4. Over time, our code will become outdated and inevitably run into security vulnerabilities. To address them, you can run:
-    ```bash
-    npm audit fix
-    ```
-5. In `set_env.sh`, environment variables are set with `export $VAR=value`. Setting it this way is not permanent; every time you open a new terminal, you will have to run `set_env.sh` to reconfigure your environment variables. To verify if your environment variable is set, you can check the variable with a command like `echo $POSTGRES_USERNAME`.
+
+## Setup for Local Development
+
+> _tip_: this frontend is designed to work with the RestAPI backends). It is recommended you stand up the backend first, test using Postman, and then the frontend should integrate.
+
+### Installing Node and NPM
+This project depends on Nodejs and Node Package Manager (NPM). Before continuing, you must download and install Node (NPM is included) from [https://nodejs.com/en/download](https://nodejs.org/en/download/).
+
+### Installing Ionic Cli
+The Ionic Command Line Interface is required to serve and build the frontend. Instructions for installing the CLI can be found in the [Ionic Framework Docs](https://ionicframework.com/docs/installation/cli).
+
+### Installing project dependencies
+
+This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the root of this repository. After cloning, open your terminal and run:
+```bash
+npm install
+```
+
+### Setup Backend Node Environment
+You'll need to create a new node server. Open a new terminal within the project directory and run:
+1. Initialize a new project: `npm init`
+2. Install express: `npm i express --save`
+3. Install typescript dependencies: `npm i ts-node-dev tslint typescript  @types/bluebird @types/express @types/node --save-dev`
+4. Look at the `package.json` file from the RestAPI repo and copy the `scripts` block into the auto-generated `package.json` in this project. This will allow you to use shorthand commands like `npm run dev`
+
+
+### Configure The Backend Endpoint
+Ionic uses enviornment files located in `./src/enviornments/enviornment.*.ts` to load configuration variables at runtime. By default `environment.ts` is used for development and `enviornment.prod.ts` is used for produciton. The `apiHost` variable should be set to your server url either locally or in the cloud.
+
+***
+### Running the Development Server
+Ionic CLI provides an easy to use development server to run and autoreload the frontend. This allows you to make quick changes and see them in real time in your browser. To run the development server, open terminal and run:
+
+```bash
+ionic serve
+```
+
+### Building the Static Frontend Files
+Ionic CLI can build the frontend into static HTML/CSS/JavaScript files. These files can be uploaded to a host to be consumed by users on the web. Build artifacts are located in `./www`. To build from source, open terminal and run:
+```bash
+ionic build
+```
+***
