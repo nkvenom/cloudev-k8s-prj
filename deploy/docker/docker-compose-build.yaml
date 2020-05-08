@@ -1,0 +1,18 @@
+version: "14"
+services:
+  revproxy:
+    build:
+      context: .
+    image: nalarm2/revproxy 
+  backend_user:
+    build:
+      context: ../../ug-api-user
+    image: nalarm2/ug-api-user
+  backend_feed:
+    build:
+      context: ../../ug-api-feed  
+    image: nalarm2/ug-api-feed
+  frontend:
+    build:
+      context: ../../ug-frontend  
+    image: nalarm2/ug-frontend:local
