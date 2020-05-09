@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: revproxy
-  name: revproxy
+    service: apiproxy
+  name: apiproxy
 spec:
   replicas: 2
   selector:
     matchLabels: 
-      service: revproxy
+      service: apiproxy
   template:
     metadata:
       labels:
-        service: revproxy
+        service: apiproxy
     spec:
       containers:
-      - image: nlaarm2/revproxy
-        name: revproxy
+      - image: nlaarm2/apiproxy
+        name: apiproxy
         imagePullPolicy: Always          
         resources:
           requests:

@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    service: revproxy
-  name: revproxy
+    service: apiproxy
+  name: apiproxy
 spec:
   type: NodePort    
   ports:
@@ -12,4 +12,4 @@ spec:
     targetPort: 8080
     nodePort: 32000
   selector:
-    service: revproxy
+    service: apiproxy
