@@ -16,7 +16,7 @@ spec:
         api: external        
     spec:
       containers:
-      - image: nlaarm2/lolfilterz-frontend:local
+      - image: nlaarm2/ug-frontend:local
         name: frontend
         imagePullPolicy: Always          
         ports:
