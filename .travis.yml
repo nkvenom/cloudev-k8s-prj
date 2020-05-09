@@ -22,7 +22,7 @@ before_script:
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push nlaarm2/revproxy 
-  - docker push nlaarm2/ug-api-user
-  - docker push nlaarm2/ug-api-feed
-  - docker push nlaarm2/ug-frontend:local  
+  - docker push $DOCKER_USERNAME/apiproxy 
+  - docker push $DOCKER_USERNAME/ug-api-user
+  - docker push $DOCKER_USERNAME/ug-api-feed
+  - docker push $DOCKER_USERNAME/ug-frontend:local  

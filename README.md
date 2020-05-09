@@ -53,15 +53,11 @@ Once those variables are defined
 ```bash
 cd ug-deployment/k8s
 # Load the secrets and env variables into k8s
-./setup-confmaps.sh
-kubectl apply -f backend-feed-deployment.yaml
-kubectl apply -f backend-feed-service.yaml
-kubectl apply -f backend-user-deployment.yaml
-kubectl apply -f backend-user-service.yaml
-kubectl apply -f apiproxy-deployment.yaml
-kubectl apply -f apiproxy-service.yaml
-kubectl apply -f frontend-deployment.yaml
-kubectl apply -f frontend-service.yaml
+# This script expect a .aws folder to exist
+./k8s-confmaps.sh
+
+#this script tries to configure all the pods and services
+./k8s-conf-svc.sh
 ```
 
 
