@@ -1,6 +1,6 @@
 version: "3"
 services:
-  revproxy:
+  apiproxy:
     build:
       context: ./apiproxy
     image: nlaarm2/apiproxy 
