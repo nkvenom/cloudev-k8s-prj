@@ -1,7 +1,7 @@
 version: "3"
 services:
-  revproxy:
-      image: nlaarm2/revproxy
+  apiproxy:
+      image: nlaarm2/apiproxy
       ports:
           - 8080:8080
       restart: always

@@ -2,8 +2,8 @@ version: "3"
 services:
   revproxy:
     build:
-      context: .
-    image: nlaarm2/revproxy 
+      context: ./apiproxy
+    image: nlaarm2/apiproxy 
   backend_user:
     build:
       context: ../../ug-api-user
